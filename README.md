@@ -105,7 +105,7 @@ Create issue on GitHub repository
 
 <div align="center">
 SG CYBER SHIELD v1.0
-SAFEWAY GUARDIAN | Nicolas E. Santiago
+SAFEWAY GUARDIAN | Nicolas E. Santiago,
 Saitama, Japan | Nov. 10, 2025
 Powered by DEEPSEEK AI RESEARCH TECHNOLOGY
 
