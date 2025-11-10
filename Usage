@@ -1,0 +1,8 @@
+After installation, use these commands from anywhere:
+
+sg_run        # 🚀 Start security system
+sg_dashboard  # 🛡️ Open security console
+sg_scan       # 🔍 Quick security scan
+sg_status     # 📊 System status
+sg_stop       # 🛑 Stop security system
+sg_help       # ℹ️  Show help
