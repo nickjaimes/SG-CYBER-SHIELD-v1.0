@@ -1,0 +1,70 @@
+cat > install_windows.bat << 'EOF'
+@echo off
+chcp 65001 >nul
+echo.
+echo ╔══════════════════════════════════════════╗
+echo ║           SG CYBER SHIELD v1.0           ║
+echo ║           SAFEWAY GUARDIAN               ║
+echo ║    Nicolas E. Santiago, Saitama, Japan   ║
+echo ║        Nov. 10, 2025                     ║
+echo ║   Powered by DEEPSEEK AI RESEARCH TECH   ║
+echo ╚══════════════════════════════════════════╝
+echo.
+
+:: Check if Docker is installed
+docker --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ❌ Docker is not installed or not in PATH
+    echo Please install Docker Desktop from:
+    echo https://docs.docker.com/desktop/install/windows-install/
+    pause
+    exit /b 1
+)
+
+:: Check if Docker is running
+docker info >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ❌ Docker is not running
+    echo Please start Docker Desktop and rerun this script
+    pause
+    exit /b 1
+)
+
+echo ✅ Docker is installed and running
+echo.
+
+:: Create directory structure
+if not exist "%USERPROFILE%\sg_cyber_shield" mkdir "%USERPROFILE%\sg_cyber_shield"
+cd /d "%USERPROFILE%\sg_cyber_shield"
+
+:: Create docker-compose.yml
+echo # ================================================== > docker-compose.yml
+echo # SG CYBER SHIELD v1.0 - Container Configuration >> docker-compose.yml
+echo # SAFEWAY GUARDIAN ^| Nicolas E. Santiago >> docker-compose.yml
+echo # Saitama, Japan ^| Nov. 10, 2025 >> docker-compose.yml
+echo # Powered by DEEPSEEK AI RESEARCH TECHNOLOGY >> docker-compose.yml
+echo # ================================================== >> docker-compose.yml
+echo services: >> docker-compose.yml
+echo   sg_core: >> docker-compose.yml
+echo     image: centos:8 >> docker-compose.yml
+echo     container_name: sg_core >> docker-compose.yml
+echo     command: sleep infinity >> docker-compose.yml
+
+echo ✅ Project structure created
+
+:: Start container
+echo 🐳 Starting security container...
+docker-compose up -d
+
+echo.
+echo 🎉 SG CYBER SHIELD v1.0 INSTALLATION COMPLETE!
+echo.
+echo 📋 MANUAL STEPS REQUIRED:
+echo 1. Open Command Prompt or PowerShell
+echo 2. Run: docker exec -it sg_core /bin/bash
+echo 3. Inside container, run the dashboard: /usr/local/bin/sg_dashboard.sh
+echo.
+echo 🔒 SG Cyber Shield - Always Vigilant!
+echo Nicolas E. Santiago ^| SAFEWAY GUARDIAN
+pause
+EOF
