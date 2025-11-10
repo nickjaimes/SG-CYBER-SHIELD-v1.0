@@ -1,0 +1,388 @@
+cat > install.sh << 'EOF'
+#!/bin/bash
+# ==================================================
+# 🛡️ SG CYBER SHIELD v1.0 - Installation Script
+# ==================================================
+# SAFEWAY GUARDIAN | Nicolas E. Santiago
+# Saitama, Japan | Nov. 10, 2025
+# Powered by DEEPSEEK AI RESEARCH TECHNOLOGY
+# ==================================================
+
+echo ""
+echo "╔══════════════════════════════════════════╗"
+echo "║           SG CYBER SHIELD v1.0           ║"
+echo "║           SAFEWAY GUARDIAN               ║"
+echo "║    Nicolas E. Santiago, Saitama, Japan   ║"
+echo "║        Nov. 10, 2025                     ║"
+echo "║   Powered by DEEPSEEK AI RESEARCH TECH   ║"
+echo "╚══════════════════════════════════════════╝"
+echo ""
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# Detect OS
+detect_os() {
+    case "$(uname -s)" in
+        Darwin*)    OS="MACOS" ;;
+        Linux*)     OS="LINUX" ;;
+        CYGWIN*|MINGW*|MSYS*) OS="WINDOWS" ;;
+        *)          OS="UNKNOWN" ;;
+    esac
+    echo -e "${CYAN}🌍 Detected OS: $OS${NC}"
+}
+
+# Check dependencies
+check_dependencies() {
+    echo -e "${BLUE}🔍 Checking dependencies...${NC}"
+    
+    # Check Docker
+    if command -v docker &> /dev/null; then
+        echo -e "${GREEN}✅ Docker is installed${NC}"
+    else
+        echo -e "${RED}❌ Docker is not installed${NC}"
+        echo -e "${YELLOW}Please install Docker first:${NC}"
+        case "$OS" in
+            "MACOS") echo "   https://docs.docker.com/desktop/install/mac-install/" ;;
+            "LINUX") echo "   https://docs.docker.com/engine/install/" ;;
+            "WINDOWS") echo "   https://docs.docker.com/desktop/install/windows-install/" ;;
+        esac
+        exit 1
+    fi
+    
+    # Check Docker running
+    if docker info &> /dev/null; then
+        echo -e "${GREEN}✅ Docker is running${NC}"
+    else
+        echo -e "${RED}❌ Docker is not running${NC}"
+        echo -e "${YELLOW}Please start Docker Desktop and rerun this script${NC}"
+        exit 1
+    fi
+}
+
+# Create project structure
+create_structure() {
+    echo -e "${BLUE}📁 Creating SG Cyber Shield structure...${NC}"
+    
+    mkdir -p sg_cyber_shield
+    cd sg_cyber_shield
+    
+    # Create docker-compose.yml
+    cat > docker-compose.yml << 'DOCKEREOF'
+# ==================================================
+# SG CYBER SHIELD v1.0 - Container Configuration
+# SAFEWAY GUARDIAN | Nicolas E. Santiago
+# Saitama, Japan | Nov. 10, 2025
+# Powered by DEEPSEEK AI RESEARCH TECHNOLOGY
+# ==================================================
+services:
+  sg_core:
+    image: centos:8
+    container_name: sg_core
+    command: sleep infinity
+    volumes:
+      - ./security_data:/etc/sg_shield
+DOCKEREOF
+
+    echo -e "${GREEN}✅ Project structure created${NC}"
+}
+
+# Setup container environment
+setup_container() {
+    echo -e "${BLUE}🐳 Setting up security container...${NC}"
+    
+    # Start container
+    docker-compose up -d
+    
+    # Install tools and create dashboard
+    docker exec -it sg_core /bin/bash -c '
+    # Fix repositories for CentOS 8
+    cd /etc/yum.repos.d/
+    sed -i "s/mirrorlist/#mirrorlist/g" /etc/yum.repos.d/CentOS-*
+    sed -i "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
+    
+    # Update system
+    yum update -y > /dev/null 2>&1
+    
+    # Install security tools
+    yum install -y net-tools lsof psacct psmisc > /dev/null 2>&1
+    
+    # Create SG Cyber Shield Dashboard
+    cat > /usr/local/bin/sg_dashboard.sh << "SCRIPTEOF"
+#!/bin/bash
+# ==================================================
+# 🛡️ SG CYBER SHIELD v1.0 - Security Dashboard
+# SAFEWAY GUARDIAN | Nicolas E. Santiago
+# Saitama, Japan | Nov. 10, 2025
+# Powered by DEEPSEEK AI RESEARCH TECHNOLOGY
+# ==================================================
+
+show_banner() {
+    clear
+    echo "╔══════════════════════════════════════════╗"
+    echo "║           SG CYBER SHIELD v1.0           ║"
+    echo "║           SAFEWAY GUARDIAN               ║"
+    echo "║    Nicolas E. Santiago, Saitama, Japan   ║"
+    echo "║        Nov. 10, 2025                     ║"
+    echo "║   Powered by DEEPSEEK AI RESEARCH TECH   ║"
+    echo "╚══════════════════════════════════════════╝"
+    echo ""
+}
+
+while true; do
+    show_banner
+    echo "📊 SYSTEM DASHBOARD"
+    echo "══════════════════════════════════════════"
+    echo "🕐  Time: $(date)"
+    echo "💻  Host: $(hostname)"
+    echo "🐳  Mode: Security Container"
+    echo "══════════════════════════════════════════"
+    echo ""
+    echo "🔧 SECURITY TOOLS"
+    echo "──────────────────────────────────────────"
+    echo "1. 🔍 Real-time System Monitor"
+    echo "2. 📊 Process Analysis & Threat Scan"
+    echo "3. 🌐 Network Security Status"
+    echo "4. 💾 Storage & Disk Analysis"
+    echo "5. 🛡️ Comprehensive Security Audit"
+    echo "6. 📈 Performance Metrics"
+    echo "7. 🚪 Exit SG Cyber Shield"
+    echo "──────────────────────────────────────────"
+    echo -n "Choose option [1-7]: "
+    read option
+    
+    case $option in
+        1)
+            echo "Loading Real-time System Monitor..."
+            top -n 1
+            ;;
+        2)
+            echo "Running Process Analysis..."
+            echo "=== TOP PROCESSES BY CPU ==="
+            ps aux --sort=-%cpu | head -15
+            echo ""
+            echo "=== SECURITY ASSESSMENT ==="
+            ps aux | grep -E "(ssh|ftp|telnet)" | grep -v grep || echo "No remote access services detected"
+            ;;
+        3)
+            echo "Checking Network Security..."
+            echo "=== ACTIVE CONNECTIONS ==="
+            netstat -tulp 2>/dev/null || echo "Run: yum install net-tools for full features"
+            echo ""
+            echo "=== LISTENING PORTS ==="
+            netstat -tulpn 2>/dev/null | grep LISTEN || echo "Network tools not fully installed"
+            ;;
+        4)
+            echo "Analyzing Storage..."
+            echo "=== DISK USAGE ==="
+            df -h
+            echo ""
+            echo "=== LARGE FILES ==="
+            find / -type f -size +100M 2>/dev/null | head -10
+            ;;
+        5)
+            echo "🛡️ Running Security Audit..."
+            echo "=== SYSTEM INFORMATION ==="
+            echo "Kernel: $(uname -r)"
+            echo "Architecture: $(uname -m)"
+            echo "Uptime: $(uptime -p)"
+            echo ""
+            echo "=== USER SESSION ==="
+            who
+            echo ""
+            echo "=== RECENT LOGINS ==="
+            last | head -10
+            ;;
+        6)
+            echo "📈 Performance Metrics"
+            echo "=== MEMORY USAGE ==="
+            free -h
+            echo ""
+            echo "=== LOAD AVERAGE ==="
+            uptime
+            echo ""
+            echo "=== ACTIVE PROCESSES ==="
+            ps aux | wc -l
+            echo "Total processes running"
+            ;;
+        7)
+            echo "Exiting SG Cyber Shield..."
+            echo "Thank you for using SG Cyber Shield v1.0"
+            echo "SAFEWAY GUARDIAN | Nicolas E. Santiago"
+            exit 0
+            ;;
+        *)
+            echo "Invalid option. Please choose 1-7."
+            ;;
+    esac
+    
+    echo ""
+    echo "Press Enter to continue..."
+    read
+done
+SCRIPTEOF
+
+    chmod +x /usr/local/bin/sg_dashboard.sh
+    '
+    
+    echo -e "${GREEN}✅ Security container configured${NC}"
+}
+
+# Create command system
+create_commands() {
+    echo -e "${BLUE}🎯 Creating SG Command System...${NC}"
+    
+    # Create commands directory
+    mkdir -p ../sg_commands
+    cd ../sg_commands
+    
+    # sg_run command
+    cat > sg_run << 'CMDEOF'
+#!/bin/bash
+echo "╔══════════════════════════════════════════╗"
+echo "║              SG CYBER SHIELD             ║"
+echo "║              SAFEWAY GUARDIAN            ║"
+echo "╚══════════════════════════════════════════╝"
+echo "🚀 Activating Security System..."
+cd ~/sg_cyber_shield
+docker-compose up -d
+echo "✅ SG Cyber Shield v1.0 is now ACTIVE"
+echo "🎯 Run 'sg_dashboard' to access security console"
+CMDEOF
+
+    # sg_dashboard command
+    cat > sg_dashboard << 'CMDEOF'
+#!/bin/bash
+echo "🛡️ Launching SG Cyber Shield Dashboard..."
+echo "Nicolas E. Santiago | SAFEWAY GUARDIAN"
+docker exec -it sg_core /usr/local/bin/sg_dashboard.sh
+CMDEOF
+
+    # sg_scan command
+    cat > sg_scan << 'CMDEOF'
+#!/bin/bash
+echo "🔍 SG Cyber Shield Quick Security Scan"
+echo "Powered by DEEPSEEK AI RESEARCH TECHNOLOGY"
+echo "══════════════════════════════════════════"
+docker exec -it sg_core ps aux --sort=-%cpu | head -10
+echo ""
+echo "✅ Scan completed - Nicolas E. Santiago"
+CMDEOF
+
+    # sg_status command
+    cat > sg_status << 'CMDEOF'
+#!/bin/bash
+echo "📊 SG CYBER SHIELD v1.0 - SYSTEM STATUS"
+echo "SAFEWAY GUARDIAN | Nicolas E. Santiago"
+echo "══════════════════════════════════════════"
+docker ps | grep sg_core && echo "✅ SECURITY CORE: ACTIVE" || echo "❌ SECURITY CORE: OFFLINE"
+echo "Run 'sg_run' to activate security system"
+CMDEOF
+
+    # sg_stop command
+    cat > sg_stop << 'CMDEOF'
+#!/bin/bash
+echo "🛑 Securing SG Cyber Shield..."
+echo "Nicolas E. Santiago | SAFEWAY GUARDIAN"
+cd ~/sg_cyber_shield
+docker-compose down
+echo "✅ SG Cyber Shield v1.0 is now SECURE"
+echo "Thank you for using our security system"
+CMDEOF
+
+    # sg_help command
+    cat > sg_help << 'CMDEOF'
+#!/bin/bash
+echo "╔══════════════════════════════════════════╗"
+echo "║        SG CYBER SHIELD v1.0 HELP         ║"
+echo "║         SAFEWAY GUARDIAN                 ║"
+echo "║    Nicolas E. Santiago, Saitama, Japan   ║"
+echo "║        Nov. 10, 2025                     ║"
+echo "║   Powered by DEEPSEEK AI RESEARCH TECH   ║"
+echo "╚══════════════════════════════════════════╝"
+echo ""
+echo "🔧 AVAILABLE COMMANDS:"
+echo "══════════════════════════════════════════"
+echo "sg_run       🚀  Start security system"
+echo "sg_dashboard 🛡️  Open security dashboard"
+echo "sg_scan      🔍  Quick security scan"
+echo "sg_status    📊  System status"
+echo "sg_stop      🛑  Stop security system"
+echo "sg_help      ℹ️   Show this help"
+echo "══════════════════════════════════════════"
+echo "Usage: Type any command from anywhere!"
+echo "Example: sg_run → sg_dashboard → sg_scan"
+CMDEOF
+
+    # Make executable
+    chmod +x *
+    
+    # Add to PATH based on OS
+    case "$OS" in
+        "MACOS"|"LINUX")
+            echo 'export PATH="$HOME/sg_commands:$PATH"' >> ~/.zshrc
+            source ~/.zshrc 2>/dev/null || source ~/.bashrc
+            ;;
+        "WINDOWS")
+            echo "For Windows, add %USERPROFILE%\\sg_commands to your PATH"
+            ;;
+    esac
+    
+    echo -e "${GREEN}✅ SG Command System installed${NC}"
+}
+
+# Main installation function
+main() {
+    echo -e "${PURPLE}🚀 Starting SG Cyber Shield v1.0 Installation...${NC}"
+    echo ""
+    
+    detect_os
+    echo ""
+    
+    check_dependencies
+    echo ""
+    
+    create_structure
+    echo ""
+    
+    setup_container
+    echo ""
+    
+    create_commands
+    echo ""
+    
+    # Final output
+    echo -e "${GREEN}╔══════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║         INSTALLATION COMPLETE!           ║${NC}"
+    echo -e "${GREEN}║         SG CYBER SHIELD v1.0             ║${NC}"
+    echo -e "${GREEN}║         SAFEWAY GUARDIAN                 ║${NC}"
+    echo -e "${GREEN}║    Nicolas E. Santiago, Saitama, Japan   ║${NC}"
+    echo -e "${GREEN}╚══════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${CYAN}📋 QUICK START GUIDE:${NC}"
+    echo "  sg_run       - Start security system"
+    echo "  sg_dashboard - Open security console"
+    echo "  sg_scan      - Run security scan"
+    echo "  sg_status    - Check system status"
+    echo "  sg_stop      - Stop security system"
+    echo ""
+    echo -e "${YELLOW}🔒 Your cybersecurity command center is ready!${NC}"
+    echo -e "${PURPLE}🛡️  SG Cyber Shield - Always Vigilant!${NC}"
+    echo ""
+    
+    # Test the installation
+    echo -e "${BLUE}🧪 Testing installation...${NC}"
+    ../sg_commands/sg_status
+}
+
+# Run installation
+main
+EOF
+
+chmod +x install.sh
