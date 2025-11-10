@@ -1,0 +1,6 @@
+Distribute the ZIP file: SG-Cyber-Shield-v1.0.zip
+Users extract and run:
+
+macOS/Linux: ./install.sh
+Windows: install_windows.bat
+Ready to use with sg_* commands!
