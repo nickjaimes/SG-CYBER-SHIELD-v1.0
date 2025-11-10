@@ -1,0 +1,15 @@
+SG Cyber Shield v1.0/
+├── 🔧 Cross-Platform Installer
+├── 🐳 Docker Container (CentOS 8)
+│   ├── Security Dashboard
+│   ├── Monitoring Tools
+│   └── Analysis Scripts
+├── 🎯 Command System
+│   ├── sg_run, sg_dashboard, sg_scan
+│   ├── sg_status, sg_stop, sg_help
+│   └── PATH integration
+└── 📊 Security Features
+    ├── Real-time process monitoring
+    ├── Network security analysis
+    ├── System performance metrics
+    └️── Comprehensive security auditing
